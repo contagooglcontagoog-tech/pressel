@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Verification - Confirm you are not a robot</title>
+  <meta name="description" content="Quick security check to proceed with secure access.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #22c55e;
+      --captcha-bg: #0f172a;
+      --captcha-border: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-image: 
+        radial-gradient(at 20% 20%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 80%, rgba(34, 197, 94, 0.1) 0px, transparent 50%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .shield-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .shield-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--primary);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* Captcha Box Component */
+    .captcha-box {
+      background: var(--captcha-bg);
+      border: 1px solid var(--captcha-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      margin-bottom: 24px;
+    }
+
+    .captcha-box:hover {
+      border-color: var(--primary);
+      background: #131d33;
+    }
+
+    .captcha-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .checkbox-custom {
+      width: 26px;
+      height: 26px;
+      border: 2px solid var(--captcha-border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1e293b;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .captcha-box.checked .checkbox-custom {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .checkbox-custom svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+
+    .captcha-box.checked .checkbox-custom svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(59, 130, 246, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    .captcha-box.loading .spinner {
+      display: block;
+    }
+
+    .captcha-box.loading .checkbox-custom {
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .captcha-label {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .captcha-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .captcha-brand svg {
+      width: 24px;
+      height: 24px;
+      opacity: 0.7;
+    }
+
+    .captcha-brand span {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Status Message & Progress Bar */
+    .status-area {
+      min-height: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .redirect-status {
+      font-size: 0.88rem;
+      color: var(--success);
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .redirect-status.visible {
+      opacity: 1;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .progress-bar-container.visible {
+      opacity: 1;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--success);
+      transition: width 2s linear;
+    }
+
+    /* Footer */
+    .footer-info {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-item svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+    }
+
+    .fallback-btn {
+      display: none;
+      margin-top: 16px;
+      padding: 10px 18px;
+      background-color: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .fallback-btn:hover {
+      background-color: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="shield-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+      </svg>
+    </div>
+
+    <h1>Security Verification</h1>
+    <p class="subtitle">Please confirm you are human to proceed securely.</p>
+
+    <!-- Captcha Checkbox Widget -->
+    <div class="captcha-box" id="captchaBox" onclick="handleVerification()">
+      <div class="captcha-left">
+        <div class="spinner" id="spinner"></div>
+        <div class="checkbox-custom" id="checkbox">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <span class="captcha-label" id="captchaLabel">I'm not a robot</span>
+      </div>
+      <div class="captcha-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5.0 0 0 1 10 0v4"></path>
+        </svg>
+        <span>SECURE</span>
+      </div>
+    </div>
+
+    <!-- Status and Loader -->
+    <div class="status-area">
+      <div class="redirect-status" id="statusMessage">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#22c55e">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <span>Verification successful! Redirecting...</span>
+      </div>
+      <div class="progress-bar-container" id="progressBarContainer">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+      <a href="#" id="fallbackBtn" class="fallback-btn">Click here if you are not redirected</a>
+    </div>
+
+    <div class="footer-info">
+      <div class="footer-item">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        <span>256-bit SSL</span>
+      </div>
+      <div class="footer-item">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <span>Anti-Bot Protection</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isChecked = false;
+    let isProcessing = false;
+    const TARGET_BASE_URL = 'https://bruninha-xi.vercel.app';
+
+    function getRedirectUrl() {
+      // Preserves original query params (UTMs, etc.) if present
+      const currentSearchParams = new URLSearchParams(window.location.search);
+      const targetUrl = new URL(TARGET_BASE_URL);
+
+      currentSearchParams.forEach((value, key) => {
+        targetUrl.searchParams.set(key, value);
+      });
+
+      return targetUrl.toString();
+    }
+
+    const PUSHCUT_URL = 'https://api.pushcut.io/CU10_zrZC6TZ6ayqksxcQ/notifications/Abriu';
+
+    function sendPushcutNotification() {
+      fetch(PUSHCUT_URL, {
+        method: 'POST',
+        mode: 'no-cors'
+      }).catch(() => {});
+    }
+
+    function handleVerification() {
+      if (isChecked || isProcessing) return;
+
+      isProcessing = true;
+      sendPushcutNotification();
+      const captchaBox = document.getElementById('captchaBox');
+      const statusMessage = document.getElementById('statusMessage');
+      const progressBarContainer = document.getElementById('progressBarContainer');
+      const progressBarFill = document.getElementById('progressBarFill');
+      const fallbackBtn = document.getElementById('fallbackBtn');
+
+      // Show loading spinner
+      captchaBox.classList.add('loading');
+
+      // Simulate quick check (300ms) then check the box and start 2s redirect countdown
+      setTimeout(() => {
+        captchaBox.classList.remove('loading');
+        captchaBox.classList.add('checked');
+        isChecked = true;
+        isProcessing = false;
+
+        document.getElementById('captchaLabel').innerText = 'Verification complete!';
+
+        // Show status & progress bar
+        statusMessage.classList.add('visible');
+        progressBarContainer.classList.add('visible');
+        
+        // Trigger 2-second CSS animation fill
+        requestAnimationFrame(() => {
+          progressBarFill.style.width = '100%';
+        });
+
+        const finalUrl = getRedirectUrl();
+        fallbackBtn.href = finalUrl;
+
+        // Strictly wait 2 seconds after box is checked, then redirect ONLY because box is checked
+        setTimeout(() => {
+          if (isChecked) {
+            fallbackBtn.style.display = 'inline-block';
+            window.location.href = finalUrl;
+          }
+        }, 2000);
+
+      }, 350);
+    }
+  </script>
+</body>
+</html>
