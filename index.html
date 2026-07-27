@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security Verification - Confirm you are not a robot</title>
-  <meta name="description" content="Quick security check to proceed with secure access.">
+  <title>Age & Content Verification</title>
+  <meta name="description" content="Please confirm your age to access VIP content.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -87,7 +87,7 @@
       line-height: 1.5;
     }
 
-    /* Captcha Box Component */
+    /* Checkbox Box Component */
     .captcha-box {
       background: var(--captcha-bg);
       border: 1px solid var(--captcha-border);
@@ -295,10 +295,10 @@
       </svg>
     </div>
 
-    <h1>Security Verification</h1>
-    <p class="subtitle">Please confirm you are human to proceed securely.</p>
+    <h1>Age Verification</h1>
+    <p class="subtitle">Please confirm you are 18 years or older to proceed to VIP access.</p>
 
-    <!-- Captcha Checkbox Widget -->
+    <!-- Checkbox Widget -->
     <div class="captcha-box" id="captchaBox" onclick="handleVerification()">
       <div class="captcha-left">
         <div class="spinner" id="spinner"></div>
@@ -307,14 +307,14 @@
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
-        <span class="captcha-label" id="captchaLabel">I'm not a robot</span>
+        <span class="captcha-label" id="captchaLabel">I am 18 years or older</span>
       </div>
       <div class="captcha-brand">
         <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5.0 0 0 1 10 0v4"></path>
         </svg>
-        <span>SECURE</span>
+        <span>18+ VIP</span>
       </div>
     </div>
 
@@ -324,7 +324,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#22c55e">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
         </svg>
-        <span>Verification successful! Redirecting...</span>
+        <span>Access Granted! Redirecting...</span>
       </div>
       <div class="progress-bar-container" id="progressBarContainer">
         <div class="progress-bar-fill" id="progressBarFill"></div>
@@ -335,11 +335,11 @@
     <div class="footer-info">
       <div class="footer-item">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-        <span>256-bit SSL</span>
+        <span>Encrypted SSL</span>
       </div>
       <div class="footer-item">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        <span>Anti-Bot Protection</span>
+        <span>18+ Age Verified Access</span>
       </div>
     </div>
   </div>
@@ -391,7 +391,7 @@
         isChecked = true;
         isProcessing = false;
 
-        document.getElementById('captchaLabel').innerText = 'Verification complete!';
+        document.getElementById('captchaLabel').innerText = 'Age verified! Entering...';
 
         // Show status & progress bar
         statusMessage.classList.add('visible');
